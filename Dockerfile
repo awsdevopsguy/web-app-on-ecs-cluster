@@ -1,11 +1,13 @@
-FROM centos:centos7
+FROM amazonlinux:latest
 
-WORKDIR /app
+WORKDIR /var/www/html
 
-RUN yum update -y && yum install -y httpd
+RUN yum clean all && yum update -y && yum install -y httpd
 
-COPY . /app
+COPY . /var/www/html/
 
-CMD ["usr/sbin/httpd", "-D", "FOREGROUND"]
+RUN echo "ServerName localhost" >> /etc/httpd/conf/httpd.conf
 
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 
+EXPOSE 80
