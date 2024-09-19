@@ -3,11 +3,11 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Installing kubectl...
-      - curl -LO "https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.9/2022-03-01/bin/linux/amd64/kubectl" # Update the version and URL as needed
-      - chmod +x ./kubectl
-      - mv ./kubectl /usr/local/bin
-      - echo "kubectl installed"
+    - echo Installing kubectl...
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - chmod +x ./kubectl
+    - mv ./kubectl /usr/local/bin
+    - echo "kubectl installed"
 
   pre_build:
     commands:
@@ -27,6 +27,11 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo "EKS_DEPLOYMENT_NAME: $EKS_DEPLOYMENT_NAME"
+      - echo "EKS_CONTAINER_NAME: $EKS_CONTAINER_NAME"
+      - echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
+      - echo "IMAGE_REPO_NAME: $IMAGE_REPO_NAME"
+      - echo "IMAGE_TAG: $IMAGE_TAG"
       
       # Uncomment for ECS deployment
       # echo Creating imagedefinitions.json...
