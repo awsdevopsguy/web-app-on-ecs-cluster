@@ -44,6 +44,7 @@ phases:
       - echo "Checking EKS cluster authentication..."
       - aws eks get-token --cluster-name "$EKS_CLUSTER_NAME"
       - echo "Deploying to EKS..."
+      - aws eks --region us-east-1 update-kubeconfig --name my-cluster
       - kubectl get deployments
       - kubectl set image deployment/"$EKS_DEPLOYMENT_NAME" "$EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG" --dry-run=client -o yaml
       - kubectl set image deployment/"$EKS_DEPLOYMENT_NAME" "$EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG"
