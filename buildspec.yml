@@ -37,7 +37,7 @@ phases:
 
       # Deploy to EKS
       - echo Configuring kubectl to access EKS...
-      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name <eks_cluster_name> # Specify your EKS cluster name
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME # Specify your EKS cluster name
       - echo Deploying to EKS...
       - kubectl set image deployment/$EKS_DEPLOYMENT_NAME $EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG --record
       - kubectl rollout status deployment/$EKS_DEPLOYMENT_NAME
