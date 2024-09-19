@@ -32,7 +32,7 @@ phases:
       - echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
       - echo "IMAGE_REPO_NAME: $IMAGE_REPO_NAME"
       - echo "IMAGE_TAG: $IMAGE_TAG"
-      
+
       # Uncomment for ECS deployment
       # echo Creating imagedefinitions.json...
       # printf '[{"name":"%s","imageUri":"%s"}]' $ECS_SERVICE_NAME $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
@@ -42,7 +42,7 @@ phases:
 
       # Deploy to EKS
       - echo Configuring kubectl to access EKS...
-      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME # Specify your EKS cluster name
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
       - echo Deploying to EKS...
       - kubectl set image deployment/$EKS_DEPLOYMENT_NAME $EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG --record
       - kubectl rollout status deployment/$EKS_DEPLOYMENT_NAME
