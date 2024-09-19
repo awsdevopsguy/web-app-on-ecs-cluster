@@ -36,15 +36,20 @@ phases:
     - echo "AWS_ACCOUNT_ID:$AWS_ACCOUNT_ID"
     - echo "IMAGE_REPO_NAME:$IMAGE_REPO_NAME"
     - echo "IMAGE_TAG:$IMAGE_TAG"
-      
-      # Deploy to EKS
+    
     - echo "Configuring kubectl to access EKS..."
     - aws eks --region "$AWS_DEFAULT_REGION" update-kubeconfig --name "$EKS_CLUSTER_NAME"
     - kubectl config get-contexts
+    
+    # Verify authentication to the EKS cluster
+    - echo "Checking EKS cluster authentication..."
+    - aws eks get-token --cluster-name "$EKS_CLUSTER_NAME"
+    
     - echo "Deploying to EKS..."
     - kubectl set image deployment/"$EKS_DEPLOYMENT_NAME" "$EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG"
     - kubectl rollout status deployment/"$EKS_DEPLOYMENT_NAME"
     - echo "EKS deployment updated successfully!"
+
 artifacts:
   files:
     # Uncomment if you want to keep track of deployment artifacts
