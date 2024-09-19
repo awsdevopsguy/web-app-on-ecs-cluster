@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Installing kubectl...
+      - echo "Installing kubectl..."
       - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - chmod +x ./kubectl
       - mv ./kubectl /usr/local/bin
@@ -11,22 +11,22 @@ phases:
 
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
-      - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - echo "Logging in to Amazon ECR..."
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
 
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+      - echo "Build started on $(date)"
+      - echo "Building the Docker image..."
+      - docker build -t "$IMAGE_REPO_NAME:$IMAGE_TAG" .
+      - docker tag "$IMAGE_REPO_NAME:$IMAGE_TAG" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG"
 
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo "Build completed on $(date)"
+      - echo "Pushing the Docker image..."
+      - docker push "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG"
       - echo "EKS_DEPLOYMENT_NAME: $EKS_DEPLOYMENT_NAME"
       - echo "EKS_CONTAINER_NAME: $EKS_CONTAINER_NAME"
       - echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
@@ -34,11 +34,11 @@ phases:
       - echo "IMAGE_TAG: $IMAGE_TAG"
       
       # Deploy to EKS
-      - echo Configuring kubectl to access EKS...
-      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
-      - echo Deploying to EKS...
-      - kubectl set image deployment/$EKS_DEPLOYMENT_NAME $EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG --record
-      - kubectl rollout status deployment/$EKS_DEPLOYMENT_NAME
+      - echo "Configuring kubectl to access EKS..."
+      - aws eks --region "$AWS_DEFAULT_REGION" update-kubeconfig --name "$EKS_CLUSTER_NAME"
+      - echo "Deploying to EKS..."
+      - kubectl set image deployment/"$EKS_DEPLOYMENT_NAME" "$EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG" --record
+      - kubectl rollout status deployment/"$EKS_DEPLOYMENT_NAME"
       - echo "EKS deployment updated successfully!"
 
 artifacts:
