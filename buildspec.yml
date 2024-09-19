@@ -3,6 +3,10 @@ version: 0.2
 phases:
   install:
     commands:
+    - echo "Setting AWS credentials..."
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - echo "AWS credentials set"
     - echo "Installing kubectl..."
     - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     - chmod +x ./kubectl
@@ -36,11 +40,11 @@ phases:
       # Deploy to EKS
     - echo "Configuring kubectl to access EKS..."
     - aws eks --region "$AWS_DEFAULT_REGION" update-kubeconfig --name "$EKS_CLUSTER_NAME"
+    - kubectl config get-contexts
     - echo "Deploying to EKS..."
-    - kubectl set image deployment/"$EKS_DEPLOYMENT_NAME" "$EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG" --record
+    - kubectl set image deployment/"$EKS_DEPLOYMENT_NAME" "$EKS_CONTAINER_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG"
     - kubectl rollout status deployment/"$EKS_DEPLOYMENT_NAME"
     - echo "EKS deployment updated successfully!"
-
 artifacts:
   files:
     # Uncomment if you want to keep track of deployment artifacts
